@@ -266,7 +266,7 @@
         <a href="/cekpotensikangker"
            class="btn-touch w-full sm:w-auto text-center px-4 py-2.5 bg-gray-700
                   hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition">
-          🔄 Ulangi Kuis
+          Ulangi Kuis
         </a>
       </div>
     </div>
@@ -284,31 +284,41 @@
   const DIET     = [[8,'Sangat teratur dan sehat'],[5,'Cukup teratur walau kadang tidak'],[3,'Sering tidak teratur'],[1,'Sangat tidak teratur']]
   const CLUBBING = [[8,'Sangat jelas membesar/melengkung'],[5,'Cukup terlihat'],[2,'Sedikit terlihat'],[1,'Tidak ada perubahan — kuku normal']]
   const GENDER   = [[1,'Laki-laki'],[2,'Perempuan']]
-
+  const WEIGHT_LOSS = [
+  [8, 'Sangat drastis — penurunan >10% berat badan dalam waktu singkat'],
+  [5, 'Cukup signifikan — penurunan 5–10% berat badan'],
+  [2, 'Sedikit mengalami penurunan (<5% berat badan)'],
+  [1, 'Tidak ada — berat badan stabil/normal']
+];
+  const OBESITY = [
+  [8, 'Sangat tinggi — obesitas tingkat berat (BMI ≥ 35)'],
+  [5, 'Cukup tinggi — kelebihan berat badan (overweight)'],
+  [2, 'Sedikit di atas berat ideal'],
+  [1, 'Tidak ada — berat badan normal/ideal']];
   const RAW = [
     ['Age',                     'Berapakah usia Anda saat ini?',                                          'n'],
     ['Gender',                  'Apa jenis kelamin Anda?',                                                GENDER],
     ['Air Pollution',           'Seberapa sering Anda terpapar polusi udara?',                           's'],
     ['Alcohol use',             'Seberapa sering Anda mengonsumsi minuman beralkohol?',                  's'],
-    ['Dust Allergy',            'Seberapa parah reaksi alergi Anda terhadap debu?',                      's'],
+    ['Dust Allergy',            'Apakah ada riwayat bereaksi parah terhadap alergi debu?',                      's'],
     ['OccuPational Hazards',    'Seberapa sering Anda terpapar bahan berbahaya di tempat kerja?',        's'],
     ['Genetic Risk',            'Apakah ada riwayat kanker paru-paru di keluarga Anda?',                 GENETIC],
-    ['chronic Lung Disease',    'Apakah Anda memiliki penyakit paru-paru kronis?',                       LUNGDIS],
+    ['chronic Lung Disease',    'Apakah Anda memiliki riwayat penyakit paru-paru dan seberapa kronis?',                       LUNGDIS],
     ['Balanced Diet',           'Bagaimana pola makan harian Anda?',                                     DIET],
-    ['Obesity',                 'Seberapa tinggi tingkat kelebihan berat badan Anda?',                   's'],
+    ['Obesity',                 'Seberapa tinggi tingkat kelebihan berat badan Anda?',                    OBESITY],
     ['Smoking',                 'Seberapa sering Anda merokok?',                                         's'],
     ['Passive Smoker',          'Seberapa sering Anda terpapar asap rokok orang lain?',                  's'],
     ['Chest Pain',              'Seberapa sering Anda merasakan nyeri atau tidak nyaman di dada?',       's'],
     ['Coughing of Blood',       'Apakah Anda pernah atau sering batuk disertai darah?',                  's'],
     ['Fatigue',                 'Seberapa sering Anda merasa kelelahan tanpa sebab jelas?',              's'],
-    ['Weight Loss',             'Seberapa signifikan penurunan berat badan Anda tanpa diet/olahraga?',   's'],
+    ['Weight Loss',             'Seberapa signifikan penurunan berat badan Anda tanpa diet/olahraga?',   WEIGHT_LOSS ],
     ['Shortness of Breath',     'Seberapa sering Anda mengalami sesak napas?',                           's'],
-    ['Wheezing',                'Seberapa sering Anda mengeluarkan suara mengi saat bernapas?',          's'],
+    ['Wheezing',                'Seberapa sering Anda mengeluarkan suara dengung saat bernapas?',          's'],
     ['Swallowing Difficulty',   'Seberapa sering Anda kesulitan menelan makanan atau minuman?',          's'],
     ['Clubbing of Finger Nails','Apakah ujung jari dan kuku Anda membesar atau melengkung?',             CLUBBING],
     ['Frequent Cold',           'Seberapa sering Anda terkena flu, pilek, atau infeksi saluran napas?', 's'],
     ['Dry Cough',               'Seberapa sering Anda mengalami batuk kering yang tidak sembuh?',        's'],
-    ['Snoring',                 'Apakah Anda mendengkur saat tidur?',                                    's'],
+    ['Snoring',                 'Seberapa sering Anda mendengkur saat tidur?',                                    's'],
   ]
 
   const questionsList = RAW.map(([feature, question, type]) => {
