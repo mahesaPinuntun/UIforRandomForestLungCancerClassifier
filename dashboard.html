@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Penapisan Dini Kanker Paru-Paru</title>
+    <title>Sistem Skrining Mandiri Kanker Paru-Paru</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -66,7 +66,7 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                     </span>
-                    Instrumen Penapisan Mandiri
+                    Instrumen SKrining Mandiri
                 </div>
                 
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug sm:leading-tight">
@@ -74,7 +74,7 @@
                 </h1>
                 
                 <p class="text-slate-600 leading-relaxed text-xs sm:text-sm md:text-base">
-                    Sistem ini dirancang secara independen sebagai platform skrining awal (*self-screening*) objektif guna membantu menekan tingginya angka tingkat kematian akibat keterlambatan penanganan klinis.
+                    Sistem ini dirancang secara independen sebagai platform skrining awal objektif guna membantu menekan tingginya angka tingkat kematian akibat keterlambatan penanganan klinis.
                 </p>
 
                 <!-- Informational Box -->
@@ -83,10 +83,40 @@
                         <i class="fa-solid fa-circle-exclamation"></i>
                     </div>
                     <div class="flex flex-col gap-1">
-                        <h3 class="font-bold text-slate-900 text-xs sm:text-sm">Deskripsi Proyek:</h3>
-                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                            Kanker paru-paru sering kali tidak menunjukkan gejala jelas pada stadium awal. Platform penapisan mandiri ini hadir sebagai sarana cepat, gratis, dan praktis untuk mengevaluasi risiko kesehatan paru-paru.
-                        </p>
+                        <h3 class="font-bold text-slate-900 text-xs sm:text-sm">Abstrask Machine Learning Model:</h3>
+                        <div class="space-y-4 text-slate-600 text-xs sm:text-sm leading-relaxed">
+  <p>
+    Kanker paru-paru merupakan salah satu penyakit dengan tingkat mortalitas tinggi yang sering kali tidak menunjukkan gejala spesifik pada stadium awal. Platform penapisan mandiri ini hadir sebagai instrumen digital untuk mengestimasi tingkat risiko kesehatan paru-paru secara cepat, gratis, dan terukur berbasis kecerdasan buatan.
+  </p>
+
+  <p>
+    Sistem ini memodelkan <strong>23 parameter klinis dan gaya hidup</strong> dari 1.000 data pasien ke dalam 3 strata risiko (<em>High, Medium, Low</em>) menggunakan algoritma <strong>Random Forest Classifier</strong> (200 <em>decision trees</em>, <code class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-[11px]">max_depth=10</code>, <code class="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-[11px]">min_samples_leaf=5</code>). Untuk menjamin ketangguhan model (<em>robustness</em>) terhadap masukan yang tidak presisi di dunia nyata, data dilatih dengan menyuntikkan <strong>Gaussian Noise N(0, 0.8²)</strong> dan <strong>5% Label Flipping</strong>.
+  </p>
+
+  <!-- Ringkasan Metrik Performa -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 py-2 my-3 border-y border-slate-200">
+    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-center">
+      <span class="block text-base sm:text-lg font-bold text-emerald-600">94.50%</span>
+      <span class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Akurasi Uji</span>
+    </div>
+    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-center">
+      <span class="block text-base sm:text-lg font-bold text-blue-600">0.25%</span>
+      <span class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Fitting Gap</span>
+    </div>
+    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-center">
+      <span class="block text-base sm:text-lg font-bold text-indigo-600">93.90%</span>
+      <span class="text-[10px] sm:text-[11px] text-slate-500 font-medium">5-Fold CV</span>
+    </div>
+    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-center">
+      <span class="block text-base sm:text-lg font-bold text-rose-600">0 Kasus</span>
+      <span class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Underdiagnosis</span>
+    </div>
+  </div>
+
+  <p class="text-slate-500 text-[11px] sm:text-xs">
+    Aplikasi ini dibangun dengan arsitektur <em>full-stack</em> yang memisahkan <strong>Flask API (Backend)</strong> dan <strong>Vue.js 3 (Frontend)</strong> menggunakan kuesioner interaktif bertahap untuk menjaga presisi data dan keselamatan klinis pengguna.
+  </p>
+</div>
                     </div>
                 </div>
 
