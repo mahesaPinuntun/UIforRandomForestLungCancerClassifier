@@ -27,7 +27,7 @@
     <!-- Header -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-4 sm:px-6 sm:py-5">
       <h1 class="text-white font-bold text-center text-base sm:text-xl leading-snug">
-        🩺 Prediksi Risiko Kanker Paru-paru
+        Prediksi Risiko Kanker Paru-paru
       </h1>
       <p class="text-blue-200 text-center text-xs sm:text-sm mt-1">
         Jawab 23 pertanyaan untuk mendapatkan prediksi risiko Anda
@@ -100,8 +100,8 @@
       <!-- SLIDER — range 1 to 8 -->
       <div v-else-if="currentQ.type === 'slider'" class="space-y-3">
         <div class="flex justify-between text-xs text-gray-400 px-1">
-          <span>1 — Tidak pernah</span>
-          <span>4 — Kadang</span>
+          <span>1 — Tidak pernah/jarang</span>
+          <span>4 — Terkadang</span>
           <span>8 — Selalu</span>
         </div>
         <input type="range"
@@ -162,7 +162,7 @@
           : 'bg-gray-200 text-gray-400 cursor-not-allowed'"
         class="btn-touch flex-1 sm:flex-none sm:px-6 py-3 rounded-xl font-semibold
                text-sm transition flex items-center justify-center gap-1">
-        🔍 <span>Lihat Hasil</span>
+        <span>Lihat Hasil</span>
       </button>
     </div>
 
@@ -218,7 +218,7 @@
 
         <div>
           <div class="flex justify-between text-xs sm:text-sm mb-1">
-            <span class="font-medium text-red-600">⚠ Risiko Tinggi</span>
+            <span class="font-medium text-red-600">Risiko Tinggi</span>
             <span class="font-bold text-red-600">{{ prob_high }}%</span>
           </div>
           <div class="w-full bg-white rounded-full h-3 sm:h-4 shadow-inner overflow-hidden">
@@ -228,7 +228,7 @@
 
         <div>
           <div class="flex justify-between text-xs sm:text-sm mb-1">
-            <span class="font-medium text-yellow-600">⚡ Risiko Sedang</span>
+            <span class="font-medium text-yellow-600">Risiko Sedang</span>
             <span class="font-bold text-yellow-600">{{ prob_medium }}%</span>
           </div>
           <div class="w-full bg-white rounded-full h-3 sm:h-4 shadow-inner overflow-hidden">
@@ -238,7 +238,7 @@
 
         <div>
           <div class="flex justify-between text-xs sm:text-sm mb-1">
-            <span class="font-medium text-green-600">✅ Risiko Rendah</span>
+            <span class="font-medium text-green-600">Risiko Rendah</span>
             <span class="font-bold text-green-600">{{ prob_low }}%</span>
           </div>
           <div class="w-full bg-white rounded-full h-3 sm:h-4 shadow-inner overflow-hidden">
