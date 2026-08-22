@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="id">
+<html :lang="lang">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Cek Risiko Kanker Paru-paru</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { -webkit-tap-highlight-color: transparent; }
     input[type=range] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: #e5e7eb; outline: none; }
@@ -24,14 +25,25 @@
 <body class="bg-gray-100 min-h-screen flex items-start justify-center p-3 sm:p-6 sm:items-center">
   <div id="app" class="bg-white shadow-xl rounded-2xl w-full max-w-lg mx-auto overflow-hidden">
 
-    <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-4 sm:px-6 sm:py-5">
-      <h1 class="text-white font-bold text-center text-base sm:text-xl leading-snug">
-        Prediksi Risiko Kanker Paru-paru
-      </h1>
-      <p class="text-blue-200 text-center text-xs sm:text-sm mt-1">
-        Jawab 23 pertanyaan untuk mendapatkan prediksi risiko Anda
-      </p>
+    <!-- Header dengan Pemilih Bahasa -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between gap-3">
+      <div>
+        <h1 class="text-white font-bold text-left text-base sm:text-xl leading-snug">
+          [[ t.headerTitle ]]
+        </h1>
+        <p class="text-blue-200 text-left text-xs sm:text-sm mt-0.5">
+          [[ t.headerSubtitle ]]
+        </p>
+      </div>
+      
+      <!-- Dropdown Bahasa -->
+      <div class="flex items-center gap-1.5 bg-blue-800/60 border border-blue-400/40 rounded-lg px-2.5 py-1 text-white text-xs font-semibold flex-shrink-0">
+        <i class="fa-solid fa-globe text-blue-200"></i>
+        <select v-model="lang" @change="simpanBahasa" class="bg-transparent border-none cursor-pointer focus:outline-none text-xs font-semibold text-white">
+          <option value="en" class="text-slate-800">EN</option>
+          <option value="id" class="text-slate-800">ID</option>
+        </select>
+      </div>
     </div>
 
     <div class="px-4 py-4 sm:px-6 sm:py-5">
@@ -41,14 +53,14 @@
     <!-- Progress -->
     <div class="mb-4">
       <div class="flex justify-between items-center mb-1.5">
-        <span class="text-xs font-medium text-gray-500">Pertanyaan [[ currentQuestion + 1 ]] dari [[ totalQuestions ]]</span>
+        <span class="text-xs font-medium text-gray-500">[[ t.qProgress ]] [[ currentQuestion + 1 ]] [[ t.of ]] [[ totalQuestions ]]</span>
         <span class="text-xs font-bold text-blue-600">[[ progressPct ]]%</span>
       </div>
       <div class="w-full bg-gray-200 rounded-full h-2 sm:h-2.5">
         <div class="bg-blue-600 h-2 sm:h-2.5 rounded-full transition-all duration-500 ease-out"
              :style="{ width: progressPct + '%' }"></div>
       </div>
-      <!-- Step dots — hidden on very small screens -->
+      <!-- Step dots -->
       <div class="hidden xs:flex gap-0.5 flex-wrap justify-center mt-2">
         <span v-for="(q, i) in questionsList" :key="i"
           :class="i === currentQuestion ? 'dot-active' : isAnswered(i) ? 'dot-done' : 'bg-gray-200'"
@@ -61,7 +73,7 @@
          :key="currentQuestion">
 
       <p class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-2">
-        Pertanyaan [[ currentQuestion + 1 ]]
+        [[ t.qProgress ]] [[ currentQuestion + 1 ]]
       </p>
       <p class="text-sm sm:text-base font-semibold text-gray-800 leading-snug mb-4">
         [[ currentQ.question ]]
@@ -71,11 +83,11 @@
       <div v-if="currentQ.type === 'number'" class="space-y-2">
         <input type="number" inputmode="numeric" pattern="[0-9]*"
           v-model.number="answers[currentQ.feature]"
-          min="1" max="120" placeholder="Contoh: 35"
+          min="1" max="120" :placeholder="t.agePlaceholder"
           class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl text-base
                  focus:border-blue-500 focus:outline-none transition font-medium
                  placeholder-gray-300"/>
-        <p class="text-xs text-gray-400">Masukkan usia dalam tahun (1–120)</p>
+        <p class="text-xs text-gray-400">[[ t.ageHelp ]]</p>
       </div>
 
       <!-- SELECT — option buttons -->
@@ -100,15 +112,15 @@
       <!-- SLIDER — range 1 to 8 -->
       <div v-else-if="currentQ.type === 'slider'" class="space-y-3">
         <div class="flex justify-between text-xs text-gray-400 px-1">
-          <span>1 — Tidak pernah/jarang</span>
-          <span>4 — Terkadang</span>
-          <span>8 — Selalu</span>
+          <span>[[ t.sliderMin ]]</span>
+          <span>[[ t.sliderMid ]]</span>
+          <span>[[ t.sliderMax ]]</span>
         </div>
         <input type="range"
           v-model.number="answers[currentQ.feature]"
           min="1" max="8" step="1"
           class="w-full accent-blue-600 cursor-pointer"/>
-        <!-- Dot indicators — touchable -->
+        <!-- Dot indicators -->
         <div class="flex justify-between px-1">
           <button v-for="n in 8" :key="n" type="button"
             @click="answers[currentQ.feature] = n"
@@ -137,7 +149,7 @@
           : 'bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700'"
         class="btn-touch flex-1 sm:flex-none sm:px-6 py-3 rounded-xl font-semibold
                text-sm transition flex items-center justify-center gap-1">
-        <span>←</span><span class="hidden sm:inline"> Kembali</span>
+        <span>←</span><span class="hidden sm:inline"> [[ t.btnBack ]]</span>
       </button>
 
       <div class="sm:hidden flex gap-0.5 flex-wrap justify-center max-w-32">
@@ -153,7 +165,7 @@
           : 'bg-gray-200 text-gray-400 cursor-not-allowed'"
         class="btn-touch flex-1 sm:flex-none sm:px-6 py-3 rounded-xl font-semibold
                text-sm transition flex items-center justify-center gap-1">
-        <span class="hidden sm:inline">Lanjut </span><span>→</span>
+        <span class="hidden sm:inline">[[ t.btnNext ]] </span><span>→</span>
       </button>
 
       <button v-else type="button" @click="submitForm" :disabled="!isCurrentAnswered"
@@ -162,7 +174,7 @@
           : 'bg-gray-200 text-gray-400 cursor-not-allowed'"
         class="btn-touch flex-1 sm:flex-none sm:px-6 py-3 rounded-xl font-semibold
                text-sm transition flex items-center justify-center gap-1">
-        <span>Lihat Hasil</span>
+        <span>[[ t.btnSubmit ]]</span>
       </button>
     </div>
 
@@ -177,11 +189,11 @@
     <!-- Error -->
     {% if error_message %}
     <div class="p-4 bg-red-50 border border-red-300 text-red-700 rounded-xl text-center">
-      <p class="font-semibold text-sm">⚠ Terjadi Kesalahan</p>
+      <p class="font-semibold text-sm">⚠ Terjadi Kesalahan / An Error Occurred</p>
       <p class="text-xs mt-1">{{ error_message }}</p>
       <a href="/cekpotensikangker"
          class="inline-block mt-3 px-4 py-2 bg-red-600 text-white rounded-lg text-sm">
-        Coba Lagi
+        [[ t.btnRetry ]]
       </a>
     </div>
     {% endif %}
@@ -196,17 +208,17 @@
       <!-- Result header -->
       <div class="{% if color == 'red' %}bg-red-500{% elif color == 'yellow' %}bg-yellow-400{% else %}bg-green-500{% endif %}
                   px-4 py-5 text-center">
-        <p class="text-white text-xs font-medium opacity-90 mb-1">Hasil Prediksi Tingkat Risiko</p>
+        <p class="text-white text-xs font-medium opacity-90 mb-1">[[ t.resHeader ]]</p>
         <p class="text-4xl sm:text-5xl font-bold text-white drop-shadow">{{ icon }} {{ label_id }}</p>
         <p class="text-white text-sm mt-2 opacity-90">
-          Keyakinan model:
+          [[ t.resConf ]]
           <strong class="{% if confidence >= 85 %}text-white{% elif confidence >= 70 %}text-white{% else %}text-yellow-100{% endif %}">
             {{ confidence }}%
           </strong>
         </p>
         {% if confidence < 70 %}
         <p class="text-yellow-100 text-xs mt-1 bg-black bg-opacity-10 rounded-full px-3 py-1 inline-block">
-          ⚠ Keyakinan rendah — konsultasi dokter disarankan
+          [[ t.resLowConf ]]
         </p>
         {% endif %}
       </div>
@@ -214,11 +226,11 @@
       <!-- Probability bars -->
       <div class="px-4 py-4 sm:px-5 space-y-3
         {% if color == 'red' %}bg-red-50{% elif color == 'yellow' %}bg-yellow-50{% else %}bg-green-50{% endif %}">
-        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Distribusi Probabilitas</p>
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">[[ t.resProbDist ]]</p>
 
         <div>
           <div class="flex justify-between text-xs sm:text-sm mb-1">
-            <span class="font-medium text-red-600">Risiko Tinggi</span>
+            <span class="font-medium text-red-600">[[ t.resHigh ]]</span>
             <span class="font-bold text-red-600">{{ prob_high }}%</span>
           </div>
           <div class="w-full bg-white rounded-full h-3 sm:h-4 shadow-inner overflow-hidden">
@@ -228,7 +240,7 @@
 
         <div>
           <div class="flex justify-between text-xs sm:text-sm mb-1">
-            <span class="font-medium text-yellow-600">Risiko Sedang</span>
+            <span class="font-medium text-yellow-600">[[ t.resMed ]]</span>
             <span class="font-bold text-yellow-600">{{ prob_medium }}%</span>
           </div>
           <div class="w-full bg-white rounded-full h-3 sm:h-4 shadow-inner overflow-hidden">
@@ -238,7 +250,7 @@
 
         <div>
           <div class="flex justify-between text-xs sm:text-sm mb-1">
-            <span class="font-medium text-green-600">Risiko Rendah</span>
+            <span class="font-medium text-green-600">[[ t.resLow ]]</span>
             <span class="font-bold text-green-600">{{ prob_low }}%</span>
           </div>
           <div class="w-full bg-white rounded-full h-3 sm:h-4 shadow-inner overflow-hidden">
@@ -259,14 +271,12 @@
 
       <!-- Footer -->
       <div class="px-4 py-3 sm:px-5 bg-white flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p class="text-xs text-gray-400 text-center sm:text-left leading-relaxed">
-          ⚠ Bukan diagnosis medis resmi.<br class="sm:hidden"/>
-          Akurasi model: 94.5%.
+        <p class="text-xs text-gray-400 text-center sm:text-left leading-relaxed" v-html="t.resDisclaimer">
         </p>
         <a href="/cekpotensikangker"
            class="btn-touch w-full sm:w-auto text-center px-4 py-2.5 bg-gray-700
                   hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition">
-          Ulangi Kuis
+          [[ t.btnRetry ]]
         </a>
       </div>
     </div>
@@ -279,63 +289,189 @@
   <script>
   const { createApp } = Vue
 
-  const GENETIC  = [[8,'Banyak anggota keluarga terkena (3+)'],[6,'Beberapa anggota terkena (2)'],[3,'Satu anggota terkena'],[2,'Tidak yakin / riwayat jauh'],[1,'Tidak ada riwayat']]
-  const LUNGDIS  = [[8,'Ya — parah (PPOK lanjut / asma berat)'],[5,'Ya — sedang (PPOK stadium 2–3)'],[3,'Ya — ringan / terkontrol'],[1,'Tidak ada penyakit paru kronis']]
-  const DIET     = [[8,'Sangat teratur dan sehat'],[5,'Cukup teratur walau kadang tidak'],[3,'Sering tidak teratur'],[1,'Sangat tidak teratur']]
-  const CLUBBING = [[8,'Sangat jelas membesar/melengkung'],[5,'Cukup terlihat'],[2,'Sedikit terlihat'],[1,'Tidak ada perubahan — kuku normal']]
-  const GENDER   = [[1,'Laki-laki'],[2,'Perempuan']]
-  const WEIGHT_LOSS = [
-  [8, 'Sangat drastis — penurunan >10% berat badan dalam waktu singkat'],
-  [5, 'Cukup signifikan — penurunan 5–10% berat badan'],
-  [2, 'Sedikit mengalami penurunan (<5% berat badan)'],
-  [1, 'Tidak ada — berat badan stabil/normal']
-];
-  const OBESITY = [
-  [8, 'Sangat tinggi — obesitas tingkat berat (BMI ≥ 35)'],
-  [5, 'Cukup tinggi — kelebihan berat badan (overweight)'],
-  [2, 'Sedikit di atas berat ideal'],
-  [1, 'Tidak ada — berat badan normal/ideal']];
-  const RAW = [
-    ['Age',                     'Berapakah usia Anda saat ini?',                                          'n'],
-    ['Gender',                  'Apa jenis kelamin Anda?',                                                GENDER],
-    ['Air Pollution',           'Seberapa sering Anda terpapar polusi udara?',                           's'],
-    ['Alcohol use',             'Seberapa sering Anda mengonsumsi minuman beralkohol?',                  's'],
-    ['Dust Allergy',            'Apakah ada riwayat bereaksi parah terhadap alergi debu?',                      's'],
-    ['OccuPational Hazards',    'Seberapa sering Anda terpapar bahan berbahaya di tempat kerja?',        's'],
-    ['Genetic Risk',            'Apakah ada riwayat kanker paru-paru di keluarga Anda?',                 GENETIC],
-    ['chronic Lung Disease',    'Apakah Anda memiliki riwayat penyakit paru-paru dan seberapa kronis?',                       LUNGDIS],
-    ['Balanced Diet',           'Bagaimana pola makan harian Anda?',                                     DIET],
-    ['Obesity',                 'Seberapa tinggi tingkat kelebihan berat badan Anda?',                    OBESITY],
-    ['Smoking',                 'Seberapa sering Anda merokok?',                                         's'],
-    ['Passive Smoker',          'Seberapa sering Anda terpapar asap rokok orang lain?',                  's'],
-    ['Chest Pain',              'Seberapa sering Anda merasakan nyeri atau tidak nyaman di dada?',       's'],
-    ['Coughing of Blood',       'Apakah Anda pernah atau sering batuk disertai darah?',                  's'],
-    ['Fatigue',                 'Seberapa sering Anda merasa kelelahan tanpa sebab jelas?',              's'],
-    ['Weight Loss',             'Seberapa signifikan penurunan berat badan Anda tanpa diet/olahraga?',   WEIGHT_LOSS ],
-    ['Shortness of Breath',     'Seberapa sering Anda mengalami sesak napas?',                           's'],
-    ['Wheezing',                'Seberapa sering Anda mengeluarkan suara dengung saat bernapas?',          's'],
-    ['Swallowing Difficulty',   'Seberapa sering Anda kesulitan menelan makanan atau minuman?',          's'],
-    ['Clubbing of Finger Nails','Apakah ujung jari dan kuku Anda membesar atau melengkung?',             CLUBBING],
-    ['Frequent Cold',           'Seberapa sering Anda terkena flu, pilek, atau infeksi saluran napas?', 's'],
-    ['Dry Cough',               'Seberapa sering Anda mengalami batuk kering yang tidak sembuh?',        's'],
-    ['Snoring',                 'Seberapa sering Anda mendengkur saat tidur?',                                    's'],
+  const DICT = {
+    en: {
+      headerTitle: "Lung Cancer Risk Prediction",
+      headerSubtitle: "Answer 23 questions to receive your risk prediction",
+      qProgress: "Question",
+      of: "of",
+      agePlaceholder: "E.g., 35",
+      ageHelp: "Enter age in years (1–120)",
+      sliderMin: "1 — Never / Rare",
+      sliderMid: "4 — Sometimes",
+      sliderMax: "8 — Always / Severe",
+      sliderRare: "Very rare",
+      sliderSometimes: "Sometimes",
+      sliderOften: "Quite often",
+      sliderSevere: "Always / Severe",
+      btnBack: "Back",
+      btnNext: "Next",
+      btnSubmit: "See Result",
+      btnRetry: "Retake Quiz",
+      resHeader: "Risk Level Prediction Result",
+      resConf: "Model confidence:",
+      resLowConf: "⚠ Low confidence — doctor consultation recommended",
+      resProbDist: "Probability Distribution",
+      resHigh: "High Risk",
+      resMed: "Medium Risk",
+      resLow: "Low Risk",
+      resDisclaimer: "⚠ Not an official medical diagnosis.<br class='sm:hidden'/> Model accuracy: 94.5%.",
+      questions: {
+        'Age': 'What is your current age?',
+        'Gender': 'What is your gender?',
+        'Air Pollution': 'How often are you exposed to air pollution?',
+        'Alcohol use': 'How often do you consume alcoholic beverages?',
+        'Dust Allergy': 'Do you have a history of severe allergic reactions to dust?',
+        'OccuPational Hazards': 'How often are you exposed to occupational hazards at work?',
+        'Genetic Risk': 'Is there a family history of lung cancer?',
+        'chronic Lung Disease': 'Do you have a history of chronic lung disease and how severe is it?',
+        'Balanced Diet': 'How would you rate your daily diet quality?',
+        'Obesity': 'What is your level of overweight/obesity?',
+        'Smoking': 'How often do you smoke?',
+        'Passive Smoker': 'How often are you exposed to second-hand smoke?',
+        'Chest Pain': 'How often do you feel chest pain or discomfort?',
+        'Coughing of Blood': 'Do you experience coughing up blood?',
+        'Fatigue': 'How often do you feel unexplained fatigue?',
+        'Weight Loss': 'How significant is your unexplained weight loss?',
+        'Shortness of Breath': 'How often do you experience shortness of breath?',
+        'Wheezing': 'How often do you experience wheezing when breathing?',
+        'Swallowing Difficulty': 'How often do you have difficulty swallowing?',
+        'Clubbing of Finger Nails': 'Are your fingertips/nails enlarged or curved (clubbing)?',
+        'Frequent Cold': 'How often do you get colds, flu, or respiratory infections?',
+        'Dry Cough': 'How often do you experience persistent dry cough?',
+        'Snoring': 'How often do you snore while sleeping?'
+      },
+      options: {
+        Gender: [[1,'Male'],[2,'Female']],
+        Genetic: [[8,'Multiple family members (3+)'],[6,'Two family members (2)'],[3,'One family member'],[2,'Unsure / Distant history'],[1,'No family history']],
+        LungDis: [[8,'Yes — Severe (COPD / severe asthma)'],[5,'Yes — Moderate (COPD stage 2–3)'],[3,'Yes — Mild / Controlled'],[1,'No chronic lung disease']],
+        Diet: [[8,'Very balanced & healthy'],[5,'Fairly balanced'],[3,'Often unbalanced'],[1,'Very unhealthy / Unbalanced']],
+        WeightLoss: [[8,'Very drastic — >10% weight loss in a short time'],[5,'Significant — 5–10% weight loss'],[2,'Slight weight loss (<5%)'],[1,'None — Stable/normal weight']],
+        Obesity: [[8,'Very high — Severe obesity (BMI ≥ 35)'],[5,'High — Overweight'],[2,'Slightly above ideal weight'],[1,'None — Normal/ideal weight']],
+        Clubbing: [[8,'Very noticeable / enlarged'],[5,'Fairly visible'],[2,'Slightly visible'],[1,'No changes — normal nails']]
+      }
+    },
+    id: {
+      headerTitle: "Prediksi Risiko Kanker Paru-paru",
+      headerSubtitle: "Jawab 23 pertanyaan untuk mendapatkan prediksi risiko Anda",
+      qProgress: "Pertanyaan",
+      of: "dari",
+      agePlaceholder: "Contoh: 35",
+      ageHelp: "Masukkan usia dalam tahun (1–120)",
+      sliderMin: "1 — Tidak pernah/jarang",
+      sliderMid: "4 — Terkadang",
+      sliderMax: "8 — Selalu / parah",
+      sliderRare: "Sangat jarang",
+      sliderSometimes: "Kadang-kadang",
+      sliderOften: "Cukup sering",
+      sliderSevere: "Selalu / parah",
+      btnBack: "Kembali",
+      btnNext: "Lanjut",
+      btnSubmit: "Lihat Hasil",
+      btnRetry: "Ulangi Kuis",
+      resHeader: "Hasil Prediksi Tingkat Risiko",
+      resConf: "Keyakinan model:",
+      resLowConf: "⚠ Keyakinan rendah — konsultasi dokter disarankan",
+      resProbDist: "Distribusi Probabilitas",
+      resHigh: "Risiko Tinggi",
+      resMed: "Risiko Sedang",
+      resLow: "Risiko Rendah",
+      resDisclaimer: "⚠ Bukan diagnosis medis resmi.<br class='sm:hidden'/> Akurasi model: 94.5%.",
+      questions: {
+        'Age': 'Berapakah usia Anda saat ini?',
+        'Gender': 'Apa jenis kelamin Anda?',
+        'Air Pollution': 'Seberapa sering Anda terpapar polusi udara?',
+        'Alcohol use': 'Seberapa sering Anda mengonsumsi minuman beralkohol?',
+        'Dust Allergy': 'Apakah ada riwayat bereaksi parah terhadap alergi debu?',
+        'OccuPational Hazards': 'Seberapa sering Anda terpapar bahan berbahaya di tempat kerja?',
+        'Genetic Risk': 'Apakah ada riwayat kanker paru-paru di keluarga Anda?',
+        'chronic Lung Disease': 'Apakah Anda memiliki riwayat penyakit paru-paru dan seberapa kronis?',
+        'Balanced Diet': 'Bagaimana pola makan harian Anda?',
+        'Obesity': 'Seberapa tinggi tingkat kelebihan berat badan Anda?',
+        'Smoking': 'Seberapa sering Anda merokok?',
+        'Passive Smoker': 'Seberapa sering Anda terpapar asap rokok orang lain?',
+        'Chest Pain': 'Seberapa sering Anda merasakan nyeri atau tidak nyaman di dada?',
+        'Coughing of Blood': 'Apakah Anda pernah atau sering batuk disertai darah?',
+        'Fatigue': 'Seberapa sering Anda merasa kelelahan tanpa sebab jelas?',
+        'Weight Loss': 'Seberapa signifikan penurunan berat badan Anda tanpa diet/olahraga?',
+        'Shortness of Breath': 'Seberapa sering Anda mengalami sesak napas?',
+        'Wheezing': 'Seberapa sering Anda mengeluarkan suara dengung saat bernapas?',
+        'Swallowing Difficulty': 'Seberapa sering Anda kesulitan menelan makanan atau minuman?',
+        'Clubbing of Finger Nails': 'Apakah ujung jari dan kuku Anda membesar atau melengkung?',
+        'Frequent Cold': 'Seberapa sering Anda terkena flu, pilek, atau infeksi saluran napas?',
+        'Dry Cough': 'Seberapa sering Anda mengalami batuk kering yang tidak sembuh?',
+        'Snoring': 'Seberapa sering Anda mendengkur saat tidur?'
+      },
+      options: {
+        Gender: [[1,'Laki-laki'],[2,'Perempuan']],
+        Genetic: [[8,'Banyak anggota keluarga terkena (3+)'],[6,'Beberapa anggota terkena (2)'],[3,'Satu anggota terkena'],[2,'Tidak yakin / riwayat jauh'],[1,'Tidak ada riwayat']],
+        LungDis: [[8,'Ya — parah (PPOK lanjut / asma berat)'],[5,'Ya — sedang (PPOK stadium 2–3)'],[3,'Ya — ringan / terkontrol'],[1,'Tidak ada penyakit paru kronis']],
+        Diet: [[8,'Sangat teratur dan sehat'],[5,'Cukup teratur walau kadang tidak'],[3,'Sering tidak teratur'],[1,'Sangat tidak teratur']],
+        WeightLoss: [[8,'Sangat drastis — penurunan >10% berat badan dalam waktu singkat'],[5,'Cukup signifikan — penurunan 5–10% berat badan'],[2,'Sedikit mengalami penurunan (<5% berat badan)'],[1,'Tidak ada — berat badan stabil/normal']],
+        Obesity: [[8,'Sangat tinggi — obesitas tingkat berat (BMI ≥ 35)'],[5,'Cukup tinggi — kelebihan berat badan (overweight)'],[2,'Sedikit di atas berat ideal'],[1,'Tidak ada — berat badan normal/ideal']],
+        Clubbing: [[8,'Sangat jelas membesar/melengkung'],[5,'Cukup terlihat'],[2,'Sedikit terlihat'],[1,'Tidak ada perubahan — kuku normal']]
+      }
+    }
+  }
+
+  const RAW_CONFIG = [
+    ['Age', 'n'],
+    ['Gender', 'Gender'],
+    ['Air Pollution', 's'],
+    ['Alcohol use', 's'],
+    ['Dust Allergy', 's'],
+    ['OccuPational Hazards', 's'],
+    ['Genetic Risk', 'Genetic'],
+    ['chronic Lung Disease', 'LungDis'],
+    ['Balanced Diet', 'Diet'],
+    ['Obesity', 'Obesity'],
+    ['Smoking', 's'],
+    ['Passive Smoker', 's'],
+    ['Chest Pain', 's'],
+    ['Coughing of Blood', 's'],
+    ['Fatigue', 's'],
+    ['Weight Loss', 'WeightLoss'],
+    ['Shortness of Breath', 's'],
+    ['Wheezing', 's'],
+    ['Swallowing Difficulty', 's'],
+    ['Clubbing of Finger Nails', 'Clubbing'],
+    ['Frequent Cold', 's'],
+    ['Dry Cough', 's'],
+    ['Snoring', 's']
   ]
 
-  const questionsList = RAW.map(([feature, question, type]) => {
-    if (type === 'n') return { feature, question, type: 'number' }
-    if (type === 's') return { feature, question, type: 'slider' }
-    return { feature, question, type: 'select',
-             options: type.map(([value, label]) => ({ value, label })) }
-  })
-
   const answers = {}
-  questionsList.forEach(q => { answers[q.feature] = q.type === 'slider' ? 1 : '' })
+  RAW_CONFIG.forEach(([feat, type]) => { answers[feat] = type === 's' ? 1 : '' })
 
   createApp({
     delimiters: ['[[', ']]'],
-    data() { return { currentQuestion: 0, answers, questionsList } },
+    data() {
+      return {
+        lang: localStorage.getItem('app_lang') || 'en', // English default
+        currentQuestion: 0,
+        answers
+      }
+    },
 
     computed: {
+      t() {
+        return DICT[this.lang]
+      },
+      questionsList() {
+        return RAW_CONFIG.map(([feature, type]) => {
+          const questionText = this.t.questions[feature] || feature
+          if (type === 'n') return { feature, question: questionText, type: 'number' }
+          if (type === 's') return { feature, question: questionText, type: 'slider' }
+          
+          const optList = this.t.options[type] || []
+          return {
+            feature,
+            question: questionText,
+            type: 'select',
+            options: optList.map(([value, label]) => ({ value, label }))
+          }
+        })
+      },
       totalQuestions()    { return this.questionsList.length },
       currentQ()          { return this.questionsList[this.currentQuestion] },
       progressPct()       { return Math.round(((this.currentQuestion + 1) / this.totalQuestions) * 100) },
@@ -346,14 +482,17 @@
       },
       sliderLabel() {
         const v = this.answers[this.currentQ.feature]
-        if (v <= 2) return 'Sangat jarang'
-        if (v <= 4) return 'Kadang-kadang'
-        if (v <= 6) return 'Cukup sering'
-        return 'Selalu / parah'
+        if (v <= 2) return this.t.sliderRare
+        if (v <= 4) return this.t.sliderSometimes
+        if (v <= 6) return this.t.sliderOften
+        return this.t.sliderSevere
       }
     },
 
     methods: {
+      simpanBahasa() {
+        localStorage.setItem('app_lang', this.lang)
+      },
       isAnswered(i) {
         const q = this.questionsList[i]
         if (q.type === 'slider') return true
