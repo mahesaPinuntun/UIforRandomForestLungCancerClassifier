@@ -25,24 +25,35 @@
 <body class="bg-gray-100 min-h-screen flex items-start justify-center p-3 sm:p-6 sm:items-center">
   <div id="app" class="bg-white shadow-xl rounded-2xl w-full max-w-lg mx-auto overflow-hidden">
 
-    <!-- Header dengan Pemilih Bahasa -->
+    <!-- Header dengan Tombol Dashboard & Pemilih Bahasa -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between gap-3">
-      <div>
-        <h1 class="text-white font-bold text-left text-base sm:text-xl leading-snug">
+      <div class="min-w-0">
+        <h1 class="text-white font-bold text-left text-base sm:text-xl leading-snug truncate">
           [[ t.headerTitle ]]
         </h1>
-        <p class="text-blue-200 text-left text-xs sm:text-sm mt-0.5">
+        <p class="text-blue-200 text-left text-xs sm:text-sm mt-0.5 truncate">
           [[ t.headerSubtitle ]]
         </p>
       </div>
       
-      <!-- Dropdown Bahasa -->
-      <div class="flex items-center gap-1.5 bg-blue-800/60 border border-blue-400/40 rounded-lg px-2.5 py-1 text-white text-xs font-semibold flex-shrink-0">
-        <i class="fa-solid fa-globe text-blue-200"></i>
-        <select v-model="lang" @change="simpanBahasa" class="bg-transparent border-none cursor-pointer focus:outline-none text-xs font-semibold text-white">
-          <option value="en" class="text-slate-800">EN</option>
-          <option value="id" class="text-slate-800">ID</option>
-        </select>
+      <!-- Action Controls Header -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <!-- Tombol Back to Dashboard Header -->
+        <a href="/" 
+           class="flex items-center gap-1.5 bg-blue-800/60 hover:bg-blue-800 border border-blue-400/40 rounded-lg px-2.5 py-1 text-white text-xs font-semibold transition"
+           :title="t.btnDashboard">
+          <i class="fa-solid fa-house text-blue-200"></i>
+          <span class="hidden sm:inline">[[ t.btnDashboard ]]</span>
+        </a>
+
+        <!-- Dropdown Bahasa -->
+        <div class="flex items-center gap-1.5 bg-blue-800/60 border border-blue-400/40 rounded-lg px-2 py-1 text-white text-xs font-semibold">
+          <i class="fa-solid fa-globe text-blue-200"></i>
+          <select v-model="lang" @change="simpanBahasa" class="bg-transparent border-none cursor-pointer focus:outline-none text-xs font-semibold text-white">
+            <option value="en" class="text-slate-800">EN</option>
+            <option value="id" class="text-slate-800">ID</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -191,10 +202,14 @@
     <div class="p-4 bg-red-50 border border-red-300 text-red-700 rounded-xl text-center">
       <p class="font-semibold text-sm">⚠ Terjadi Kesalahan / An Error Occurred</p>
       <p class="text-xs mt-1">{{ error_message }}</p>
-      <a href="/cekpotensikangker"
-         class="inline-block mt-3 px-4 py-2 bg-red-600 text-white rounded-lg text-sm">
-        [[ t.btnRetry ]]
-      </a>
+      <div class="flex gap-2 justify-center mt-3">
+        <a href="/" class="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-semibold">
+          [[ t.btnDashboard ]]
+        </a>
+        <a href="/cekpotensikangker" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold">
+          [[ t.btnRetry ]]
+        </a>
+      </div>
     </div>
     {% endif %}
 
@@ -265,19 +280,26 @@
         <p class="text-xs sm:text-sm font-semibold
           {% if color == 'red' %}text-red-700{% elif color == 'yellow' %}text-yellow-700{% else %}text-green-700{% endif %}
           leading-snug">
-          💡 {{ advice }}
+          💡 [[ t.resultAdvice['{{ prediction }}'] || '{{ advice }}' ]]
         </p>
       </div>
 
-      <!-- Footer -->
-      <div class="px-4 py-3 sm:px-5 bg-white flex flex-col sm:flex-row items-center justify-between gap-2">
+      <!-- Footer Action Result -->
+      <div class="px-4 py-3 sm:px-5 bg-white flex flex-col sm:flex-row items-center justify-between gap-3">
         <p class="text-xs text-gray-400 text-center sm:text-left leading-relaxed" v-html="t.resDisclaimer">
         </p>
-        <a href="/cekpotensikangker"
-           class="btn-touch w-full sm:w-auto text-center px-4 py-2.5 bg-gray-700
-                  hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition">
-          [[ t.btnRetry ]]
-        </a>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <a href="/"
+             class="btn-touch flex-1 sm:flex-none text-center px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-1.5 border border-gray-200">
+            <i class="fa-solid fa-house text-xs"></i>
+            <span>[[ t.btnDashboard ]]</span>
+          </a>
+          <a href="/cekpotensikangker"
+             class="btn-touch flex-1 sm:flex-none text-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-rotate-right text-xs"></i>
+            <span>[[ t.btnRetry ]]</span>
+          </a>
+        </div>
       </div>
     </div>
     {% endif %}
@@ -308,6 +330,7 @@
       btnNext: "Next",
       btnSubmit: "See Result",
       btnRetry: "Retake Quiz",
+      btnDashboard: "Dashboard",
       resHeader: "Risk Level Prediction Result",
       resConf: "Model confidence:",
       resLowConf: "⚠ Low confidence — doctor consultation recommended",
@@ -316,6 +339,16 @@
       resMed: "Medium Risk",
       resLow: "Low Risk",
       resDisclaimer: "⚠ Not an official medical diagnosis.<br class='sm:hidden'/> Model accuracy: 94.5%.",
+      resultLabels: {
+        'High': 'High Risk',
+        'Medium': 'Medium Risk',
+        'Low': 'Low Risk'
+      },
+      resultAdvice: {
+        'High': 'Consult a lung specialist immediately.',
+        'Medium': 'Consult a doctor and start improving your lifestyle.',
+        'Low': 'Maintain a healthy lifestyle and schedule routine check-ups.'
+      },
       questions: {
         'Age': 'What is your current age?',
         'Gender': 'What is your gender?',
@@ -339,17 +372,7 @@
         'Clubbing of Finger Nails': 'Are your fingertips/nails enlarged or curved (clubbing)?',
         'Frequent Cold': 'How often do you get colds, flu, or respiratory infections?',
         'Dry Cough': 'How often do you experience persistent dry cough?',
-        'Snoring': 'How often do you snore while sleeping?',
-        resultLabels: {
-    'High': 'High Risk',
-    'Medium': 'Medium Risk',
-    'Low': 'Low Risk'
-  },
-  resultAdvice: {
-    'High': 'Consult a lung specialist immediately.',
-    'Medium': 'Consult a doctor and start improving your lifestyle.',
-    'Low': 'Maintain a healthy lifestyle and schedule routine check-ups.'
-  }
+        'Snoring': 'How often do you snore while sleeping?'
       },
       options: {
         Gender: [[1,'Male'],[2,'Female']],
@@ -379,6 +402,7 @@
       btnNext: "Lanjut",
       btnSubmit: "Lihat Hasil",
       btnRetry: "Ulangi Kuis",
+      btnDashboard: "Beranda",
       resHeader: "Hasil Prediksi Tingkat Risiko",
       resConf: "Keyakinan model:",
       resLowConf: "⚠ Keyakinan rendah — konsultasi dokter disarankan",
@@ -387,6 +411,16 @@
       resMed: "Risiko Sedang",
       resLow: "Risiko Rendah",
       resDisclaimer: "⚠ Bukan diagnosis medis resmi.<br class='sm:hidden'/> Akurasi model: 94.5%.",
+      resultLabels: {
+        'High': 'Risiko Tinggi',
+        'Medium': 'Risiko Sedang',
+        'Low': 'Risiko Rendah'
+      },
+      resultAdvice: {
+        'High': 'Segera konsultasikan dengan dokter spesialis paru.',
+        'Medium': 'Konsultasikan dengan dokter dan mulai perbaiki gaya hidup.',
+        'Low': 'Pertahankan gaya hidup sehat dan lakukan pemeriksaan rutin.'
+      },
       questions: {
         'Age': 'Berapakah usia Anda saat ini?',
         'Gender': 'Apa jenis kelamin Anda?',
