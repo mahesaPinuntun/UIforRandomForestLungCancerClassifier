@@ -224,7 +224,7 @@
       <div class="{% if color == 'red' %}bg-red-500{% elif color == 'yellow' %}bg-yellow-400{% else %}bg-green-500{% endif %}
                   px-4 py-5 text-center">
         <p class="text-white text-xs font-medium opacity-90 mb-1">[[ t.resHeader ]]</p>
-        <p class="text-4xl sm:text-5xl font-bold text-white drop-shadow">{{ icon }} [[ t.resultLabels['{{ prediction }}'] || '{{ label_id }}' ]]</p>
+        <p class="text-4xl sm:text-5xl font-bold text-white drop-shadow">{{ icon }} [[ getResultLabel('{{ prediction }}', '{{ label_id }}') ]]</p>
         <p class="text-white text-sm mt-2 opacity-90">
           [[ t.resConf ]]
           <strong class="{% if confidence >= 85 %}text-white{% elif confidence >= 70 %}text-white{% else %}text-yellow-100{% endif %}">
@@ -280,7 +280,7 @@
         <p class="text-xs sm:text-sm font-semibold
           {% if color == 'red' %}text-red-700{% elif color == 'yellow' %}text-yellow-700{% else %}text-green-700{% endif %}
           leading-snug">
-          💡 [[ t.resultAdvice['{{ prediction }}'] || '{{ advice }}' ]]
+          💡 [[ getResultAdvice('{{ prediction }}', '{{ advice }}') ]]
         </p>
       </div>
 
@@ -491,7 +491,7 @@
     delimiters: ['[[', ']]'],
     data() {
       return {
-        lang: localStorage.getItem('app_lang') || 'en', // English default
+        lang: localStorage.getItem('app_lang') || 'en',
         currentQuestion: 0,
         answers
       }
@@ -499,15 +499,15 @@
 
     computed: {
       t() {
-        return DICT[this.lang]
+        return DICT[this.lang] || DICT['en']
       },
       questionsList() {
         return RAW_CONFIG.map(([feature, type]) => {
-          const questionText = this.t.questions[feature] || feature
+          const questionText = this.t.questions ? (this.t.questions[feature] || feature) : feature
           if (type === 'n') return { feature, question: questionText, type: 'number' }
           if (type === 's') return { feature, question: questionText, type: 'slider' }
           
-          const optList = this.t.options[type] || []
+          const optList = this.t.options ? (this.t.options[type] || []) : []
           return {
             feature,
             question: questionText,
@@ -536,6 +536,14 @@
     methods: {
       simpanBahasa() {
         localStorage.setItem('app_lang', this.lang)
+      },
+      getResultLabel(predKey, defaultLabel) {
+        if (!predKey || !this.t || !this.t.resultLabels) return defaultLabel
+        return this.t.resultLabels[predKey] || defaultLabel
+      },
+      getResultAdvice(predKey, defaultAdvice) {
+        if (!predKey || !this.t || !this.t.resultAdvice) return defaultAdvice
+        return this.t.resultAdvice[predKey] || defaultAdvice
       },
       isAnswered(i) {
         const q = this.questionsList[i]
