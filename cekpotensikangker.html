@@ -209,7 +209,7 @@
       <div class="{% if color == 'red' %}bg-red-500{% elif color == 'yellow' %}bg-yellow-400{% else %}bg-green-500{% endif %}
                   px-4 py-5 text-center">
         <p class="text-white text-xs font-medium opacity-90 mb-1">[[ t.resHeader ]]</p>
-        <p class="text-4xl sm:text-5xl font-bold text-white drop-shadow">{{ icon }} {{ label_id }}</p>
+        <p class="text-4xl sm:text-5xl font-bold text-white drop-shadow">{{ icon }} [[ t.resultLabels['{{ prediction }}'] || '{{ label_id }}' ]]</p>
         <p class="text-white text-sm mt-2 opacity-90">
           [[ t.resConf ]]
           <strong class="{% if confidence >= 85 %}text-white{% elif confidence >= 70 %}text-white{% else %}text-yellow-100{% endif %}">
@@ -339,7 +339,17 @@
         'Clubbing of Finger Nails': 'Are your fingertips/nails enlarged or curved (clubbing)?',
         'Frequent Cold': 'How often do you get colds, flu, or respiratory infections?',
         'Dry Cough': 'How often do you experience persistent dry cough?',
-        'Snoring': 'How often do you snore while sleeping?'
+        'Snoring': 'How often do you snore while sleeping?',
+        resultLabels: {
+    'High': 'High Risk',
+    'Medium': 'Medium Risk',
+    'Low': 'Low Risk'
+  },
+  resultAdvice: {
+    'High': 'Consult a lung specialist immediately.',
+    'Medium': 'Consult a doctor and start improving your lifestyle.',
+    'Low': 'Maintain a healthy lifestyle and schedule routine check-ups.'
+  }
       },
       options: {
         Gender: [[1,'Male'],[2,'Female']],
